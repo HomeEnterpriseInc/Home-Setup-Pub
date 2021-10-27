@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    ad.datadoghq.com/nginx-ingress-controller.check_names: '["nginx","nginx_ingress_controller"]'
+    ad.datadoghq.com/nginx-ingress-controller.init_configs: '[{},{}]'
+    ad.datadoghq.com/nginx-ingress-controller.instances: '[{"nginx_status_url": "http://%%host%%:18080/nginx_status"},{"prometheus_url":
+      "http://%%host%%:10254/metrics"}]'
+  name: nginx-ingress
+  namespace: argocd
+spec:
+  destination:
+    namespace: nginx-ingress
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: nginx-ingress
+    helm:
+      parameters:
+        - name: controller.publishService.enabled
+          value: "true"
+        - name: controller.service.externalTrafficPolicy
+          value: Local
+    repoURL: https://charts.helm.sh/stable
+    targetRevision: 1.41.3
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=background

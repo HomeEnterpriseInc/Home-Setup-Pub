@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opencart
+  namespace: argocd
+spec:
+  destination:
+    namespace: external
+    server: https://kubernetes.default.svc
+  project: external-sites
+  source:
+    chart: opencart
+    helm:
+      parameters:
+        - name: image.tag
+          value: "3.0.3-8"
+        - name: replicaCount
+          value: "0"
+        - name: ingress.hosts[0].host
+          value: cart.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: cart.example.com
+        - name: opencart.host
+          value: cart.example.com
+        - name: opencart.database.password
+          value: "base64-database-password"
+        - name: opencart.smtp.username
+          value: mygmailemail@gmail.com
+        - name: opencart.smtp.password
+          value: "base64-smtp-password"
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "1.9"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

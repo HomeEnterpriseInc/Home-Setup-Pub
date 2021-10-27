@@ -1,0 +1,119 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: internal-data-pv
+  finalizers: []
+  labels:
+    hostNetwork: "false"
+    internal-service: "true"
+    managed-by: chynten
+    created-by: chynten
+    version: "1.0.0"
+spec:
+  volumeMode: Filesystem
+  capacity:
+    storage: 128Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage-class
+  local:
+    path: /opt/data/
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - your-pc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: internal-media-pv
+  finalizers: []
+  labels:
+    hostNetwork: "false"
+    internal-service: "true"
+    managed-by: chynten
+    created-by: chynten
+    version: "1.0.0"
+spec:
+  capacity:
+    storage: 2.5Ti
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage-class
+  local:
+    path: /mnt/1
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - your-pc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: internal-timemachine-backup-pv
+  finalizers: []
+  labels:
+    hostNetwork: "false"
+    internal-service: "true"
+    managed-by: chynten
+    created-by: chynten
+    version: "1.0.0"
+spec:
+  capacity:
+    storage: 950Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage-class
+  local:
+    path: /mnt/2
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - your-pc
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: internal-general-backup-pv
+  finalizers: []
+  labels:
+    hostNetwork: "false"
+    internal-service: "true"
+    managed-by: chynten
+    created-by: chynten
+    version: "1.0.0"
+spec:
+  capacity:
+    storage: 825Gi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage-class
+  local:
+    path: /mnt/3
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - your-pc

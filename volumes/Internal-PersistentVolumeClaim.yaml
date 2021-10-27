@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: internal-data-pvc
+  namespace: internal
+  finalizers: []
+  labels:
+    hostNetwork: "false"
+    internal-service: "true"
+    managed-by: chynten
+    created-by: chynten
+    version: "1.0.0"
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: internal-data-pv
+  storageClassName: local-storage-class
+  resources:
+    requests:
+      storage: "128Gi"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: internal-media-pvc
+  namespace: internal
+  finalizers: []
+  labels:
+    hostNetwork: "false"
+    internal-service: "true"
+    managed-by: chynten
+    created-by: chynten
+    version: "1.0.0"
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: internal-media-pv
+  storageClassName: local-storage-class
+  resources:
+    requests:
+      storage: "2.5Ti"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: internal-timemachine-backup-pvc
+  namespace: internal
+  finalizers: []
+  labels:
+    hostNetwork: "false"
+    internal-service: "true"
+    managed-by: chynten
+    created-by: chynten
+    version: "1.0.0"
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: internal-timemachine-backup-pv
+  storageClassName: local-storage-class
+  resources:
+    requests:
+      storage: "950Gi"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: internal-general-backup-pvc
+  namespace: internal
+  finalizers: []
+  labels:
+    hostNetwork: "false"
+    internal-service: "true"
+    managed-by: chynten
+    created-by: chynten
+    version: "1.0.0"
+spec:
+  accessModes:
+    - ReadWriteMany
+  volumeName: internal-general-backup-pv
+  storageClassName: local-storage-class
+  resources:
+    requests:
+      storage: "825Gi"

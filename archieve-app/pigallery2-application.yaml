@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pigallery2
+  namespace: argocd
+spec:
+  destination:
+    namespace: pigallery2-1
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: pi-gallery2
+    helm:
+      parameters:
+        - name: ingress.hosts[0].host
+          value: pigal2.internal.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: pigal2.internal.example.com
+        - name: storage.affirmative.nodeName
+          value: chynten
+        - name: storage.imageDir
+          value: /mnt/Photoes
+        - name: ingress.hosts[0].paths[0].backend.serviceName
+          value: piGallery2-svc
+        - name: resources.requests.memory
+          value: 2048Mi
+        - name: resources.requests.cpu
+          value: "1"
+        - name: storage.dataDir
+          value: /opt/data/pigallery2/data
+        - name: storage.configDir
+          value: /opt/data/pigallery2/config
+        - name: image.repository
+          value: bpatrik/pigallery2
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: 0.2.0
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

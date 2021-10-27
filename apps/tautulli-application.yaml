@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tautulli
+  namespace: argocd
+spec:
+  destination:
+    namespace: internal
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: tautulli
+    helm:
+      parameters:
+        - name: image.repository
+          value: "tautulli/tautulli"
+        - name: image.tag
+          value: "v2.7.7"
+        - name: ingress.hosts[0].host
+          value: tautulli.internal.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: tautulli.internal.example.com
+#        - name: resources.requests.cpu
+#          value: 10m
+#        - name: resources.limits.cpu
+#          value: 10m
+#        - name: resources.requests.memory
+#          value: 60Mi
+#        - name: resources.limits.memory
+#          value: 90Mi
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.1"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

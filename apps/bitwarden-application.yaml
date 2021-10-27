@@ -1,0 +1,52 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bitwarden
+  namespace: argocd
+spec:
+  destination:
+    namespace: internal
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: bitwarden
+    helm:
+      parameters:
+        - name: image.repository
+          value: "vaultwarden/server"
+        - name: image.tag
+          value: "1.23.0"
+        - name: bitwarden.smtp.fromEmail
+          value: mygmailemail@gmail.com
+        - name: bitwarden.smtp.password
+          value: app-password
+        - name: bitwarden.smtp.userName
+          value: mygmailemail@gmail.com
+        - name: ingress.hosts[0].host
+          value: bitw.internal.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: bitw.internal.example.com
+        - name: ingress.tls[0].secretName
+          value: bitwarden-letsencrypt-certificate
+        - name: bitwarden.signup.allowed
+          value: "false"
+        - name: bitwarden.domain
+          value: https://bitw.internal.example.com
+#        - name: resources.requests.cpu
+#          value: 10m
+#        - name: resources.limits.cpu
+#          value: 10m
+#        - name: resources.requests.memory
+#          value: 40Mi
+#        - name: resources.limits.memory
+#          value: 60Mi
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.1"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

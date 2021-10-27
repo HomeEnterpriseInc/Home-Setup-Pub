@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cert-manager
+  namespace: argocd
+spec:
+  destination:
+    namespace: cert-manager
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: cert-manager
+    helm:
+      parameters:
+        - name: cloudflair.email
+          value: mygmailemail@gmail.com
+        - name: cloudflair.keyRef
+          value: example-com-account-key
+        - name: cloudflair.apiToken
+          value: api-token-as-per-readme-file
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: 1.5.3
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=background

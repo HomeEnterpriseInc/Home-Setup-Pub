@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloudbeaver
+  namespace: argocd
+spec:
+  destination:
+    namespace: internal
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: cloudbeaver
+    helm:
+      parameters:
+        - name: image.repository
+          value: "dbeaver/cloudbeaver"
+        - name: replicaCount
+          value: "1"
+        - name: image.tag
+          value: "21.2.0"
+        - name: ingress.hosts[0].host
+          value: db.internal.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: db.internal.example.com
+#        - name: resources.requests.cpu
+#          value: 40m
+#        - name: resources.limits.cpu
+#          value: 50m
+#        - name: resources.requests.memory
+#          value: 80Mi
+#        - name: resources.limits.memory
+#          value: 110Mi
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.1"

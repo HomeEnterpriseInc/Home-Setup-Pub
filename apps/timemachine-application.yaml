@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: time-machine
+  namespace: argocd
+spec:
+  destination:
+    namespace: internal
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: time-machine
+    helm:
+      parameters:
+        - name: image.repository
+          value: "mbentley/timemachine"
+        - name: image.tag
+          value: "smb-20211026"
+        - name: timeMachine.userName
+          value: someusername
+        - name: timeMachine.password
+          value: base64-password
+        - name: timeMachine.shareName
+          value: AirTimeMachine
+        - name: timeMachine.advertisedHostname
+          value: ""
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.4"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

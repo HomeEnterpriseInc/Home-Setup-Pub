@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  repositories: |
+    - name: datadog
+      type: helm
+      url: https://helm.datadoghq.com
+    - name: stable
+      type: helm
+      url: https://charts.helm.sh/stable
+    - name: HomeEnterpriseInc
+      type: helm
+      url: https://homeenterpriseinc.github.io/helm-charts/
+    - type: git
+      url: https://github.com/HomeEnterpriseInc/home-setup-pub.git
+      usernameSecret:
+        key: username
+        name: repo-homeenterpriseinc
+      passwordSecret:
+        key: password
+        name: repo-homeenterpriseinc
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: repo-homeenterpriseinc
+  namespace: argocd
+type: Opaque
+data:
+  username: base64-git-user-name
+  password: base64-git-user-password

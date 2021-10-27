@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: datadog
+  namespace: argocd
+spec:
+  destination:
+    namespace: datadog
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: datadog
+    helm:
+      parameters:
+        - name: datadog.networkMonitoring.enabled
+          value: "true"
+        - name: datadog.logs.enabled
+          value: "true"
+        - name: datadog.logs.containerCollectAll
+          value: "true"
+        - name: datadog.apiKey
+          value: datadog-api-key
+        - name: datadog.site
+          value: datadoghq.com
+        - name: datadog.processAgent.processCollection
+          value: "false"
+#        - name: agents.containers.agent.resources.requests.cpu
+#          value: 660m
+#        - name: agents.containers.agent.resources.limits.cpu
+#          value: 1000m
+#        - name: agents.containers.agent.resources.requests.memory
+#          value: 140Mi
+#        - name: agents.containers.agent.resources.limits.memory
+#          value: 200Mi
+    repoURL: https://helm.datadoghq.com
+    targetRevision: 2.22.16
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=background

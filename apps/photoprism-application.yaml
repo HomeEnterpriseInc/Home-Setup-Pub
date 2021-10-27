@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: photoprism
+  namespace: argocd
+spec:
+  destination:
+    namespace: internal
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: photoprism
+    helm:
+      parameters:
+        - name: image.repository
+          value: "photoprism/photoprism"
+        - name: image.tag
+          value: "20211018"
+        - name: replicaCount
+          value: "1"
+        - name: ingress.hosts[0].host
+          value: photos.internal.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: photos.internal.example.com
+        - name: photoprism.url
+          value: "https://photos.internal.example.com/"
+        - name: photoprism.adminPassword
+          value: "base64-admin-password"
+        - name: photoprism.mysql.password
+          value: "base64-database-password"
+        - name: storage.data.mounts[0].name
+          value: CameraUploads
+        - name: storage.data.mounts[0].subPath
+          value: "your-pc/Camera Uploads"
+#        - name: resources.requests.cpu
+#          value: 1320m
+#        - name: resources.limits.cpu
+#          value: 2000m
+#        - name: resources.requests.memory
+#          value: 1130Mi
+#        - name: resources.limits.memory
+#          value: 1710Mi
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.1"

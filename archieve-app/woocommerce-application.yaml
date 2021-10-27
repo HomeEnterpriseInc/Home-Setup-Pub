@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: woocommerce
+  namespace: argocd
+spec:
+  destination:
+    namespace: external
+    server: https://kubernetes.default.svc
+  project: external-sites
+  source:
+    chart: wordpress
+    helm:
+      parameters:
+        - name: image.tag
+          value: "5.8.0-php8.0-apache"
+        - name: replicaCount
+          value: "0"
+        - name: nameOverride
+          value: woocommerce
+        - name: ingress.hosts[0].host
+          value: ecom.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: ecom.example.com
+        - name: wordpress.mysql.dbName
+          value: "db-name"
+        - name: wordpress.mysql.username
+          value: "db-username"
+        - name: wordpress.mysql.password
+          value: "base64-database-password"
+        - name: storage.data.subPath
+          value: woocommerce
+        - name: ingress.tls[0].secretName
+          value: woocommerce-letsencrypt-certificate
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "1.1"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

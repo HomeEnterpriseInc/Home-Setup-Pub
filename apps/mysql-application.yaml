@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mysql
+  namespace: argocd
+spec:
+  destination:
+    namespace: internal
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: mysql
+    helm:
+      parameters:
+        - name: image.repository
+          value: "mysql"
+        - name: image.tag
+          value: "8.0.27"
+        - name: storage.data.claimName
+          value: internal-data-pvc
+        - name: mysql.rootPassword
+          value: "base64-root-password"
+#        - name: resources.requests.cpu
+#          value: 100m
+#        - name: resources.limits.cpu
+#          value: 150m
+#        - name: resources.requests.memory
+#          value: 256Mi
+#        - name: resources.limits.memory
+#          value: 512Mi
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.1"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

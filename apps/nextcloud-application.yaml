@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nextcloud
+  namespace: argocd
+spec:
+  destination:
+    namespace: internal
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: nextcloud
+    helm:
+      parameters:
+        - name: image.repository
+          value: "nextcloud"
+        - name: image.tag
+          value: "22.2.0-apache"
+        - name: ingress.hosts[0].host
+          value: nc.internal.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: nc.internal.example.com
+#        - name: resources.requests.cpu
+#          value: 40m
+#        - name: resources.limits.cpu
+#          value: 60m
+#        - name: resources.requests.memory
+#          value: 100Mi
+#        - name: resources.limits.memory
+#          value: 140Mi
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.1"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

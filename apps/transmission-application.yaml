@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: transmission
+  namespace: argocd
+spec:
+  destination:
+    namespace: internal
+    server: https://kubernetes.default.svc
+  project: internal-sites
+  source:
+    chart: transmission
+    helm:
+      parameters:
+        - name: image.repository
+          value: "linuxserver/transmission"
+        - name: image.tag
+          value: "3.00-r2-ls104"
+        - name: transmission.username
+          value: "base64-username"
+        - name: transmission.password
+          value: "base64-password"
+        - name: ingress.hosts[0].host
+          value: trans.internal.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: trans.internal.example.com
+        - name: transmission.webHome
+          value: "/flood-for-transmission/"
+#        - name: resources.requests.cpu
+#          value: 50m
+#        - name: resources.limits.cpu
+#          value: 50m
+#        - name: resources.requests.memory
+#          value: 100Mi
+#        - name: resources.limits.memory
+#          value: 150Mi
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.1"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

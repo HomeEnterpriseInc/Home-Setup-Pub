@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wordpress
+  namespace: argocd
+spec:
+  destination:
+    namespace: external
+    server: https://kubernetes.default.svc
+  project: external-sites
+  source:
+    chart: wordpress
+    helm:
+      parameters:
+        - name: image.tag
+          value: "5.8.1-php8.0-apache"
+        - name: wordpress.mysql.password
+          value: "wordpress-mysql-password"
+        - name: ingress.hosts[0].host
+          value: blog.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: blog.example.com
+#        - name: resources.requests.cpu
+#          value: 410m
+#        - name: resources.limits.cpu
+#          value: 620m
+#        - name: resources.requests.memory
+#          value: 220Mi
+#        - name: resources.limits.memory
+#          value: 320Mi
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.1"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

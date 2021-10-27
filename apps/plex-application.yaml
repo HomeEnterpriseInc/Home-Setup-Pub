@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: plex
+  namespace: argocd
+spec:
+  destination:
+    namespace: external
+    server: https://kubernetes.default.svc
+  project: external-sites
+  source:
+    chart: plex
+    helm:
+      parameters:
+        - name: image.repository
+          value: "plexinc/pms-docker"
+        - name: image.tag
+          value: "1.24.4.5081-e362dc1ee"
+        - name: ingress.hosts[0].host
+          value: plex.example.com
+        - name: ingress.tls[0].hosts[0]
+          value: plex.example.com
+        - name: plex.claimRef
+          value: "claim-from-plex.tv"
+#        - name: resources.requests.cpu
+#          value: 60m
+#        - name: resources.limits.cpu
+#          value: 80m
+#        - name: resources.requests.memory
+#          value: 300Mi
+#        - name: resources.limits.memory
+#          value: 450Mi
+      valueFiles:
+        - values.yaml
+    repoURL: https://homeenterpriseinc.github.io/helm-charts/
+    targetRevision: "0.1"
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=background
