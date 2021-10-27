@@ -15,7 +15,7 @@ This is a project for starter to setup whole home in kubernetes infrastructure. 
 
 
 ### Steps to use this repository
-1. Install Ubuntu Server & Open SSH
+1. Install Ubuntu Server & Open SSH & Docker
 2. Install Kubernetes - K3s 
    ```shell
     curl -sfL https://get.k3s.io | sh -s - --write-kubeconfig-mode 644 --docker --disable traefik,local-storage,metrics-server
