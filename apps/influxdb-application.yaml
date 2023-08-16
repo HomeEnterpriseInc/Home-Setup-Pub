@@ -1,0 +1,32 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: influxdb
+  namespace: argocd
+spec:
+  destination:
+    namespace: influxdb
+    server: https://kubernetes.default.svc
+  project: internal-projects
+  source:
+    chart: influxdb
+    helm:
+      parameters:
+        - name: image.repository
+          value: "influxdb"
+        - name: image.tag
+          value: "1.8.0-alpine"
+        - name: persistence.storageClass
+          value: local-path
+        - name: service.type
+          value: LoadBalancer
+      valueFiles:
+        - values.yaml
+    repoURL: https://helm.influxdata.com/
+    targetRevision: "0.12"
+  syncPolicy:
+ #   automated:
+ #     prune: true
+ #     selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
